@@ -106,7 +106,6 @@ function App() {
                         <Route path="/album/:albumId" element={<Album />} />
                         <Route path="/public_playlists/:playlistId" element={<PublicPlaylists />} />
                         <Route path="/anotherChoise/:categoriesId" element={<AnotherChoise />} />
-                        <Route path="*" element={<NoFound />} />
                     </Routes>
                 </div>
             </div>
