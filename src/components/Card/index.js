@@ -33,7 +33,6 @@ function Card({
         theme,
         favoriteSongs,
         setFavoriteSongs,
-        artistsFollow,
         playlists,
         setPlaylists,
         songIndex,
@@ -65,13 +64,16 @@ function Card({
 
     // Handler Favorite Song
     const addFavoriteSong = (dataFavorite) => {
-        setFavoriteSongs((prev) => [...prev, dataFavorite]);
+        let newList = [...favoriteSongs, dataFavorite];
+        localStorage.setItem('favoriteSongs', JSON.stringify(newList));
+        setFavoriteSongs([...newList]);
     };
 
     const removeFavoriteSong = (songId) => {
         let newList = favoriteSongs.filter((item) => {
             return item.id !== songId;
         });
+        localStorage.setItem('favoriteSongs', JSON.stringify(newList));
         setFavoriteSongs([...newList]);
     };
 
@@ -116,7 +118,7 @@ function Card({
 
     useEffect(() => {
         let handler = (e) => {
-            if (!menuRef?.current.contains(e.target)) {
+            if (!menuRef?.current?.contains(e.target)) {
                 setOpenMenu(false);
             }
         };
@@ -153,10 +155,6 @@ function Card({
             theme: 'colored',
         });
     };
-
-    // Update localStorage
-    localStorage.setItem('favoriteSongs', JSON.stringify(favoriteSongs));
-    localStorage.setItem('artistsFollow', JSON.stringify(artistsFollow));
 
     return (
         <div
@@ -443,11 +441,11 @@ function Card({
 
                                 {/* Of Album */}
                                 <div className="w-[300px] ml-[100px] truncate hover:underline">
-                                    <Link to={`/album/${data?.song.album.id}`}>{data?.song.album.name}</Link>
+                                    <Link to={`/album/${data?.song?.album?.id}`}>{data?.song?.album.name}</Link>
                                 </div>
                             </div>
                             <div className="ml-[80px] text-[14px] font-semibold">
-                                {timeConversion(data.song.duration_ms)}
+                                {timeConversion(data?.song?.duration_ms)}
                             </div>
 
                             {/* Các tuỳ chọn */}
@@ -479,7 +477,7 @@ function Card({
                                 {/* Like/UnLike Song Btn  */}
                                 {data?.likeSong_Btn && (
                                     <button className="w-[30px] h-[20px] text-[20px] px-[10px] py-[5px] flex justify-center items-center cursor-pointer">
-                                        {favoriteSongs.map((song) => song?.id).includes(data?.song.id) === false ? (
+                                        {favoriteSongs.map((song) => song?.id).includes(data?.song?.id) === false ? (
                                             <Tippy content="Thích bài hát này">
                                                 <div
                                                     onClick={() => {

@@ -27,6 +27,7 @@ function Artists() {
         });
         setArtistsFollow([...newList]);
     };
+    localStorage.setItem('artistsFollow', JSON.stringify(artistsFollow));
 
     const CLIENT_ID = '360b3682710348698d1992386de2dd6a';
     const CLIENT_SECRET = '25a196bf0119450c84e8ed819ebc5f9b';

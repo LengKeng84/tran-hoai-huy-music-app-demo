@@ -21,6 +21,7 @@ import PublicPlaylists from './pages/PublicPlaylists';
 import AnotherChoise from './pages/AnotherChoise';
 import NoFound from './pages/NoFound';
 import ScrollOnTop from './components/ScrollOnTop';
+import OnTopBtn from './components/OnTopBtn';
 // ---------------------------
 
 function App() {
@@ -79,6 +80,7 @@ function App() {
             {/* <Router> */}
             <div className={`App relative bg-[${theme.primary1}]`}>
                 <ScrollOnTop />
+                <OnTopBtn />
                 <ColNavbar />
                 <SignInLayout />
                 <div

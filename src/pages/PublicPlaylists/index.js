@@ -10,11 +10,15 @@ function PublicPlaylists() {
     const { theme, setPlaySong, setSongIndex } = useContext(Data);
 
     const [playlistData, setPlaylistData] = useState();
-    const [tracks, setTracks] = useState();
+    const [tracks, setTracks] = useState({});
 
     // Handler Play all songs
     const playAllSongs = () => {
-        let newList = tracks?.items.map((data) => data?.track);
+        let newList = tracks?.items
+            ?.filter((song) => {
+                return song?.track?.preview_url !== null && song?.track;
+            })
+            .map((data) => data?.track);
         setSongIndex(0);
         setPlaySong([...newList]);
     };
@@ -80,16 +84,20 @@ function PublicPlaylists() {
                 </div>
                 <div className="pl-[30px] ">
                     <div className="text-[30px] font-black ">#Playlist</div>
-                    <div className="text-[45px] font-black mt-[10px] overflow-ellipsis">{playlistData?.name}</div>
+                    <div className="text-[45px] font-black mt-[10px] w-[700px] truncate whitespace-pre-wrap">
+                        {playlistData?.name}
+                    </div>
                     <div className="text-[25px] font-bold flex justify-start items-center">
                         <span>Của {playlistData?.owner.display_name}</span>
                         <i class="fa-solid fa-circle text-[8px] ml-[30px]"></i>
                         <span className="ml-[10px] text-[20px]">
-                            {playlistData?.tracks?.items?.filter((song) => song?.track.preview_url !== null).length} bài
-                            hát
+                            {playlistData?.tracks?.items?.filter((song) => song?.track?.preview_url !== null).length}{' '}
+                            bài hát
                         </span>
                     </div>
-                    <div className="mt-[10px] text-[18px] overflow-y-clip">{playlistData?.description}</div>
+                    <div className="mt-[10px] text-[18px] h- w-[700px] truncate whitespace-pre-wrap">
+                        {playlistData?.description}
+                    </div>
                 </div>
             </div>
             {/* Header - End */}
@@ -99,21 +107,25 @@ function PublicPlaylists() {
                 {/* Header */}
                 <div className="flex justify-start items-center pb-[20px] border-b-[1px] border-[rgba(255,255,255,0.6)]">
                     {/* Play */}
-                    <button
-                        onClick={() => playAllSongs()}
-                        className="flex justify-center items-center duration-300 hover:scale-[1.05]"
-                    >
-                        <i
-                            class={`fa-solid fa-play text-[25px] w-[50px] h-[50px] bg-[${theme.primary1}] rounded-full flex justify-center items-center`}
-                        ></i>
-                        <span className="text-[25px] font-semibold pl-[10px]">Phát tất cả</span>
-                    </button>
+                    {tracks && (
+                        <button
+                            onClick={() => playAllSongs()}
+                            className="flex justify-center items-center duration-300 hover:scale-[1.05]"
+                        >
+                            <i
+                                class={`fa-solid fa-play text-[25px] w-[50px] h-[50px] bg-[${theme.primary1}] rounded-full flex justify-center items-center`}
+                            ></i>
+                            <span className="text-[25px] font-semibold pl-[10px]">Phát tất cả</span>
+                        </button>
+                    )}
                 </div>
 
                 {/* Container - Start */}
                 <div>
                     {tracks?.items
-                        ?.filter((song) => song?.track.preview_url !== null)
+                        ?.filter((song) => {
+                            return song?.track?.preview_url !== null && song?.track;
+                        })
                         .map((data, index) => (
                             <Card
                                 key={index}

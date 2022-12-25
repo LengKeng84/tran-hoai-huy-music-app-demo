@@ -18,7 +18,9 @@ function Album() {
 
     // Handler Play all songs
     const playAllSongs = () => {
-        let newList = albumData?.tracks?.items.map((data) => Object.assign(data, { album: albumData }));
+        let newList = albumData?.tracks?.items
+            ?.filter((song) => song?.preview_url !== null)
+            .map((data) => Object.assign(data, { album: albumData }));
         setSongIndex(0);
         setPlaySong([...newList]);
     };
@@ -26,12 +28,13 @@ function Album() {
     // Add/Remove album to list
     const addAlbum = (data) => {
         setFavoriteAlbums((prev) => [...prev, data]);
+        localStorage.setItem('favoriteAlbums', JSON.stringify(favoriteAlbums));
     };
     const removeAlbum = (albumId) => {
         let newList = favoriteAlbums.filter((data) => data.id !== albumId);
         setFavoriteAlbums([...newList]);
+        localStorage.setItem('favoriteAlbums', JSON.stringify(favoriteAlbums));
     };
-    localStorage.setItem('favoriteAlbums', JSON.stringify(favoriteAlbums));
 
     // Get API data
 

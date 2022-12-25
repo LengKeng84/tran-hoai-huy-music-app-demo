@@ -117,7 +117,6 @@ function PlayerSong() {
         });
     };
 
-    console.log(playlists);
     return (
         <div
             className={`fixed w-full h-[120px] bottom-0 z-50 flex justify-between items-center bg-[${
@@ -158,7 +157,6 @@ function PlayerSong() {
             {/* Audio */}
             <AudioPlayer
                 className={`playerMusic`}
-                // src={playSong[songIndex]?.preview_url}
                 src={songCurrent?.preview_url}
                 autoPlay
                 showSkipControls
