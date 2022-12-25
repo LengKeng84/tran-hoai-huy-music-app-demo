@@ -14,9 +14,6 @@ code {
 @tailwind utilities;
 
 @Layer utilities {
-    .dropdownBtn_Card:hover>.dropdownContent_Card {
-        display: block !important;
-    }
 
     .itemDropdown_Card:hover>.submenu_Card {
         display: block !important;

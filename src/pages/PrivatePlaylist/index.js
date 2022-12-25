@@ -1,14 +1,12 @@
 import { Link } from 'react-router-dom';
 import { useContext, useEffect, useState } from 'react';
 import { Data } from '../../Context';
-import Tippy from '@tippyjs/react';
-import 'tippy.js/dist/tippy.css';
 
 import RowNavbar from '../../components/RowNavbar/RowNavbar';
 import Card from '../../components/Card';
 
 function PrivatePlaylist({ data, index }) {
-    const { theme, playlists, setPlaylists } = useContext(Data);
+    const { theme, playlists, setPlaylists, setPlaySong, setSongIndex } = useContext(Data);
 
     const [searchResult, setSearchResult] = useState('');
     const [dataSong, setDataSong] = useState();
@@ -18,20 +16,17 @@ function PrivatePlaylist({ data, index }) {
     const [inputName, setInputName] = useState('');
     const [activeWarning, setActiveWarning] = useState(false);
 
+    // Handler Play all songs
+    const playAllSongs = () => {
+        let newList = data?.dataSongs;
+        setSongIndex(0);
+        setPlaySong([...newList]);
+    };
+
     // Add/remove playlist
     const addSongToList = (item) => {
         let newObject = data;
         newObject.dataSongs.push(item);
-        let newList = playlists;
-        newList.splice(index, 1, newObject);
-        localStorage.setItem('playList', JSON.stringify(newList)); // Update localStorage
-        setPlaylists([...newList]);
-    };
-
-    const removeSongFromList = (indexItem) => {
-        let newValue = data.dataSongs;
-        newValue.splice(indexItem, 1);
-        let newObject = { ...data, dataSongs: newValue };
         let newList = playlists;
         newList.splice(index, 1, newObject);
         localStorage.setItem('playList', JSON.stringify(newList)); // Update localStorage
@@ -219,7 +214,10 @@ function PrivatePlaylist({ data, index }) {
                     <div className="">
                         {/* Title */}
 
-                        <button className="group px-[5px] flex justify-start items-center cursor-pointer">
+                        <button
+                            onClick={() => playAllSongs()}
+                            className="group px-[5px] flex justify-start items-center cursor-pointer"
+                        >
                             <div
                                 className={`w-[60px] h-[60px] rounded-full flex justify-center items-center bg-[${theme.primary1}] text-[25px] duration-300 group-hover:bg-[rgba(185,185,185,0.4)]`}
                             >
@@ -298,7 +296,7 @@ function PrivatePlaylist({ data, index }) {
                                 onClick={() => setOpenSearcher(false)}
                                 className="text-[30px] absolute top-[-30%] right-[-50px]"
                             >
-                                <i className="fa-solid fa-xmark "></i>
+                                <i className="fa-solid fa-xmark"></i>
                             </button>
                         </div>
 

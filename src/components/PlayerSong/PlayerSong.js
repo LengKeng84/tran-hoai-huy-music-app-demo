@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState, useRef } from 'react';
 import AudioPlayer from 'react-h5-audio-player';
 import 'react-h5-audio-player/lib/styles.css';
 import { Link } from 'react-router-dom';
@@ -10,8 +10,18 @@ import 'react-toastify/dist/ReactToastify.css';
 import Card from '../Card';
 
 function PlayerSong() {
-    const { theme, playSong, favoriteSongs, setFavoriteSongs, songCurrent, setSongCurrent, songIndex, setSongIndex } =
-        useContext(Data);
+    const {
+        theme,
+        playSong,
+        favoriteSongs,
+        setFavoriteSongs,
+        songCurrent,
+        setSongCurrent,
+        songIndex,
+        setSongIndex,
+        playlists,
+        setPlaylists,
+    } = useContext(Data);
 
     // Open active player
     const [hiddenPlayer, setHiddenPlayer] = useState(true);
@@ -50,6 +60,49 @@ function PlayerSong() {
         setFavoriteSongs([...newList]);
     };
 
+    // Handler Add/remove Song in Playlist
+    const addSongtoPlaylist = (song, playlist, indexPlaylist) => {
+        const check = playlist.dataSongs.map((data) => data?.id).includes(song?.id);
+
+        if (!check) {
+            let newObj = playlist;
+            newObj.dataSongs.push(song);
+            let newList = playlists;
+            newList.splice(indexPlaylist, 1, newObj);
+            localStorage.setItem('playList', JSON.stringify(newList));
+            setPlaylists([...newList]);
+            Toastify(`Đã thêm bài hát vào playlist: ${playlist.name}!`);
+        } else {
+            toast.error('Bài hát đã có trong playlist này rồi!', {
+                position: 'top-right',
+                autoClose: 2000,
+                hideProgressBar: true,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: 'colored',
+            });
+        }
+    };
+
+    // Click outside
+    const [openMenu, setOpenMenu] = useState(false);
+    let menuRef = useRef();
+
+    useEffect(() => {
+        let handler = (e) => {
+            if (!menuRef?.current.contains(e.target)) {
+                setOpenMenu(false);
+            }
+        };
+        document.addEventListener('mousedown', handler);
+
+        return () => {
+            document.removeEventListener('mousedown', handler);
+        };
+    });
+
     // Toastify react
     const Toastify = (title) => {
         toast.success(title, {
@@ -64,6 +117,7 @@ function PlayerSong() {
         });
     };
 
+    console.log(playlists);
     return (
         <div
             className={`fixed w-full h-[120px] bottom-0 z-50 flex justify-between items-center bg-[${
@@ -113,7 +167,7 @@ function PlayerSong() {
                 onClickNext={nextSong}
             />
 
-            {/* Btn - Start*/}
+            {/* Buttons - Start*/}
             <div className="w-[400px] flex justify-center items-center">
                 {/* Like Song - Start*/}
                 <button className="w-[30px] h-[20px] text-[25px] px-[10px] py-[5px] flex justify-center items-center cursor-pointer">
@@ -141,6 +195,44 @@ function PlayerSong() {
                         </Tippy>
                     )}
                 </button>
+
+                {/* Thêm vào playlist */}
+
+                <Tippy content="Thêm vào palylist">
+                    <div
+                        onClick={() => setOpenMenu(!openMenu)}
+                        ref={menuRef}
+                        className="relative ml-[30px] pt-[15px] translate-y-[-5px] cursor-pointer"
+                    >
+                        <i class="fa-solid fa-music text-[20px]"></i>
+                        <i class="fa-solid fa-plus"></i>
+
+                        <div
+                            className={`absolute bottom-[100%] left-[50%] translate-x-[-50%] bg-[${
+                                theme.primary2
+                            }] w-[250px] py-[10px] rounded-[10px] ${openMenu ? 'block' : 'hidden'}`}
+                        >
+                            <div className="text-center font-semibold border-b-[1px] pb-[10px]">Thêm vào playlist</div>
+                            <div className="">
+                                {playlists?.length > 0 ? (
+                                    playlists?.map((playlist, index) => (
+                                        <div
+                                            onClick={() => addSongtoPlaylist(songCurrent, playlist, index)}
+                                            key={index}
+                                            className="px-[10px] py-[5px] cursor-pointer hover:bg-[rgba(0,0,0,0.5)]"
+                                        >
+                                            {playlist.name}
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="text-center px-[10px] py-[10px] font-semibold text-[20px]">
+                                        Hiện chưa có Playlist nào, vào thư viện để tạo
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </Tippy>
 
                 {/* Danh sách chờ - waiting*/}
                 <div className="ml-[30px]">
@@ -193,7 +285,7 @@ function PlayerSong() {
                 </div>
                 {/* Like Song - End*/}
             </div>
-            {/* Btn - End */}
+            {/* Buttons - End */}
         </div>
     );
 }

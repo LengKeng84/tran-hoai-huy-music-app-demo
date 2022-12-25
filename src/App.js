@@ -1,6 +1,6 @@
 import './App.css';
 import { Route, Routes } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Data } from './Context';
 // -----------------------
 import ColNavbar from './components/ColNavbar';
@@ -20,6 +20,7 @@ import FavoriteAlbum from './pages/FavoriteAlbum';
 import PublicPlaylists from './pages/PublicPlaylists';
 import AnotherChoise from './pages/AnotherChoise';
 import NoFound from './pages/NoFound';
+import ScrollOnTop from './components/ScrollOnTop';
 // ---------------------------
 
 function App() {
@@ -43,9 +44,6 @@ function App() {
             { name: '#1 Danh sách phát của tôi', dataSongs: [] },
             { name: '#2 Danh sách phát của tôi', dataSongs: [] },
             { name: '#3 Danh sách phát của tôi', dataSongs: [] },
-            { name: '#4 Danh sách phát của tôi', dataSongs: [] },
-            { name: '#5 Danh sách phát của tôi', dataSongs: [] },
-            { name: '#6 Danh sách phát của tôi', dataSongs: [] },
         ],
     );
     // Favorite Song
@@ -80,6 +78,7 @@ function App() {
         >
             {/* <Router> */}
             <div className={`App relative bg-[${theme.primary1}]`}>
+                <ScrollOnTop />
                 <ColNavbar />
                 <SignInLayout />
                 <div
@@ -106,6 +105,7 @@ function App() {
                         <Route path="/album/:albumId" element={<Album />} />
                         <Route path="/public_playlists/:playlistId" element={<PublicPlaylists />} />
                         <Route path="/anotherChoise/:categoriesId" element={<AnotherChoise />} />
+                        <Route path="*" element={<NoFound />} />
                     </Routes>
                 </div>
             </div>

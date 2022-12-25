@@ -11,10 +11,17 @@ import Card from '../../components/Card';
 
 function Album() {
     const { albumId } = useParams();
-    const { theme, favoriteAlbums, setFavoriteAlbums } = useContext(Data);
+    const { theme, favoriteAlbums, setFavoriteAlbums, setPlaySong, setSongIndex } = useContext(Data);
 
     const [albumData, setAlbumData] = useState();
     const [artist, setArtist] = useState();
+
+    // Handler Play all songs
+    const playAllSongs = () => {
+        let newList = albumData?.tracks?.items.map((data) => Object.assign(data, { album: albumData }));
+        setSongIndex(0);
+        setPlaySong([...newList]);
+    };
 
     // Add/Remove album to list
     const addAlbum = (data) => {
@@ -25,9 +32,6 @@ function Album() {
         setFavoriteAlbums([...newList]);
     };
     localStorage.setItem('favoriteAlbums', JSON.stringify(favoriteAlbums));
-
-    // Add/remove favorite song
-    const addFavoriteSong = (data) => {};
 
     // Get API data
 
@@ -139,7 +143,10 @@ function Album() {
                 {/* Header */}
                 <div className="flex justify-start items-center pb-[20px] border-b-[1px] border-[rgba(255,255,255,0.6)]">
                     {/* Play */}
-                    <button className="flex justify-center items-center duration-300 hover:scale-[1.05]">
+                    <button
+                        onClick={() => playAllSongs()}
+                        className="flex justify-center items-center duration-300 hover:scale-[1.05]"
+                    >
                         <i
                             class={`fa-solid fa-play text-[25px] w-[50px] h-[50px] bg-[${theme.primary1}] rounded-full flex justify-center items-center`}
                         ></i>

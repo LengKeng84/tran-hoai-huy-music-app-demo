@@ -3,7 +3,7 @@ import 'tippy.js/dist/tippy.css';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import { useContext } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { Data } from '../../Context';
 import { timeConversion } from '../../functions/TimeConversion';
 import { followersConversion } from '../../functions/FollowersConversion';
@@ -110,6 +110,23 @@ function Card({
         setPlaylists([...newList]);
     };
 
+    // Click outside
+    const [openMenu, setOpenMenu] = useState(false);
+    let menuRef = useRef();
+
+    useEffect(() => {
+        let handler = (e) => {
+            if (!menuRef?.current.contains(e.target)) {
+                setOpenMenu(false);
+            }
+        };
+        document.addEventListener('mousedown', handler);
+
+        return () => {
+            document.removeEventListener('mousedown', handler);
+        };
+    });
+
     // Toastify react
     const Toastify = (title) => {
         toast.success(title, {
@@ -172,7 +189,7 @@ function Card({
                             {/* Image */}
                             <div
                                 onClick={() => playThisSong(data)}
-                                className="group relative w-[190px] h-[190px] flex justify-center items-center cursor-pointer overflow-hidden"
+                                className="relative w-[190px] h-[190px] flex justify-center items-center cursor-pointer overflow-hidden"
                             >
                                 <img src={data?.album.images[0]?.url} alt="" className="w-full h-full rounded-[5px]" />
 
@@ -243,15 +260,22 @@ function Card({
 
                                 {/* Dropdown - Start*/}
                                 {/* Btn Open */}
-                                <div className="dropdownBtn_Card relative">
-                                    <button
-                                        className={`w-[35px] h-[30px] text-[25px] flex justify-center items-center cursor-pointer`}
-                                    >
-                                        <i class="fa-solid fa-ellipsis"></i>
-                                    </button>
+                                <div ref={menuRef} className={`relative ${openMenu && 'flex'}`}>
+                                    <Tippy content="Các tuỳ chọn khác">
+                                        <button
+                                            onClick={() => setOpenMenu(!openMenu)}
+                                            className={`w-[35px] h-[30px] text-[25px] flex justify-center items-center cursor-pointer`}
+                                        >
+                                            <i class="fa-solid fa-ellipsis"></i>
+                                        </button>
+                                    </Tippy>
                                     {/* dropdownContent_Card - Start */}
                                     <div
-                                        className={`dropdownContent_Card hidden absolute z-10 bottom-[100%] right-[-5px] w-[220px] py-[10px] bg-[${theme.primary2}] rounded-[5px] border-[1px] border-[gray]`}
+                                        className={` ${
+                                            openMenu ? 'block' : 'hidden'
+                                        } absolute z-10 bottom-[100%] right-[-5px] w-[220px] py-[10px] bg-[${
+                                            theme.primary2
+                                        }] rounded-[5px] border-[1px] border-[gray]`}
                                     >
                                         <div
                                             onClick={() => addWaitingList(data)}
@@ -381,7 +405,7 @@ function Card({
                                     onClick={() => playThisSong(data?.song)}
                                     className="relative w-[50px] flex justify-center items-center cursor-pointer"
                                 >
-                                    {data?.song.id === songCurrent?.id ? (
+                                    {data?.song?.id === songCurrent?.id ? (
                                         <div className="absolute top-[2px] left-[30%]">
                                             <WaveMusic primary2 />
                                         </div>
@@ -394,8 +418,8 @@ function Card({
                                     onClick={() => playThisSong(data?.song)}
                                     className="relative w-[45px] h-[45px] rounded-[3px] overflow-hidden cursor-pointer"
                                 >
-                                    <img src={data?.song.album?.images[0].url} alt="" className="w-full h-full" />
-                                    {data?.song.id !== songCurrent?.id ? (
+                                    <img src={data?.song?.album?.images[0].url} alt="" className="w-full h-full" />
+                                    {data?.song?.id !== songCurrent?.id ? (
                                         <div className="absolute top-0 left-0 w-full h-full bg-[rgba(0,0,0,0.7)] justify-center items-center hidden group-hover:flex">
                                             <i class="fa-solid fa-play text-[18px] text-[#fff]"></i>
                                         </div>
@@ -408,12 +432,12 @@ function Card({
 
                                 {/* Info name/artists*/}
                                 <div className="w-[320px] ml-[15px] ">
-                                    <div className="text-[16px] font-semibold truncate">{data?.song.name}</div>
+                                    <div className="text-[16px] font-semibold truncate">{data?.song?.name}</div>
                                     <Link
-                                        to={`/artists/${data?.song.artists[0].id}`}
+                                        to={`/artists/${data?.song?.artists[0].id}`}
                                         className="text-[15px] truncate hover:underline"
                                     >
-                                        {data?.song.artists[0].name}
+                                        {data?.song?.artists[0].name}
                                     </Link>
                                 </div>
 
@@ -494,9 +518,10 @@ function Card({
                                 )}
 
                                 {/* Dropdown - Start*/}
-                                <div className="dropdownBtn_Card relative">
+                                <div ref={menuRef} className="relative">
                                     {/* Btn */}
                                     <button
+                                        onClick={() => setOpenMenu(!openMenu)}
                                         className={`w-[40px] h-[30px] text-[25px] flex justify-center items-center cursor-pointer`}
                                     >
                                         <i class="fa-solid fa-ellipsis"></i>
@@ -504,18 +529,22 @@ function Card({
 
                                     {/* Dropdown Content */}
                                     <div
-                                        className={`dropdownContent_Card hidden absolute z-10 bottom-[100%] right-0 w-[240px] py-[10px] bg-[${theme.primary2}] rounded-[5px] border-[1px] border-[gray]`}
+                                        className={`dropdownContent_Card ${
+                                            openMenu ? 'block' : 'hidden'
+                                        } absolute z-10 bottom-[100%] right-0 w-[240px] py-[10px] bg-[${
+                                            theme.primary2
+                                        }] rounded-[5px] border-[1px] border-[gray]`}
                                     >
                                         <div
                                             onClick={() => addWaitingList(data?.song)}
-                                            className="px-[10px] py-[5px] cursor-pointer hover:bg-[rgba(255,255,255,0.4)]"
+                                            className="px-[10px] py-[12px] cursor-pointer hover:bg-[rgba(255,255,255,0.4)]"
                                         >
                                             <i class="fa-solid fa-clock"></i>
                                             <span className="text-[14px] font-semibold ml-[10px]">
                                                 Thêm vào danh sách chờ
                                             </span>
                                         </div>
-                                        <div className="itemDropdown_Card px-[10px] py-[5px] flex justify-start items-center cursor-pointer hover:bg-[rgba(255,255,255,0.4)]">
+                                        <div className="itemDropdown_Card px-[10px] py-[12px] flex justify-start items-center cursor-pointer hover:bg-[rgba(255,255,255,0.4)]">
                                             <i class="fa-solid fa-list"></i>
                                             <span className="text-[14px] font-semibold ml-[10px]">
                                                 Thêm vào Playlist
@@ -634,9 +663,10 @@ function Card({
                                     )}
                                 </div>
                                 {/* Dropdown Btn - Start*/}
-                                <div className="dropdownBtn_Card relative">
+                                <div ref={menuRef} className="relative">
                                     {/* Btn */}
                                     <button
+                                        onClick={() => setOpenMenu(!openMenu)}
                                         className={`w-[40px] h-[30px] text-[25px] flex justify-center items-center cursor-pointer`}
                                     >
                                         <i class="fa-solid fa-ellipsis"></i>
@@ -644,18 +674,22 @@ function Card({
 
                                     {/* Dropdown Content */}
                                     <div
-                                        className={`dropdownContent_Card hidden absolute z-10 bottom-[100%] right-0 w-[240px] py-[10px] bg-[${theme.primary2}] rounded-[5px] border-[1px] border-[gray]`}
+                                        className={`dropdownContent_Card ${
+                                            openMenu ? 'block' : 'hidden'
+                                        } absolute z-10 bottom-[100%] right-0 w-[240px] py-[10px] bg-[${
+                                            theme.primary2
+                                        }] rounded-[5px] border-[1px] border-[gray]`}
                                     >
                                         <div
                                             onClick={() => addWaitingList(data?.song)}
-                                            className="px-[10px] py-[5px] cursor-pointer hover:bg-[rgba(255,255,255,0.4)]"
+                                            className="px-[10px] py-[12px] cursor-pointer hover:bg-[rgba(255,255,255,0.4)]"
                                         >
                                             <i class="fa-solid fa-clock"></i>
                                             <span className="text-[14px] font-semibold ml-[10px]">
                                                 Thêm vào danh sách chờ
                                             </span>
                                         </div>
-                                        <div className="itemDropdown_Card px-[10px] py-[5px] flex justify-start items-center cursor-pointer hover:bg-[rgba(255,255,255,0.4)]">
+                                        <div className="itemDropdown_Card px-[10px] py-[12px] flex justify-start items-center cursor-pointer hover:bg-[rgba(255,255,255,0.4)]">
                                             <i class="fa-solid fa-list"></i>
                                             <span className="text-[14px] font-semibold ml-[10px]">
                                                 Thêm vào Playlist
@@ -724,9 +758,6 @@ function Card({
                         )}
                     </div>
                     <div className="text-[18px] font-bold truncate mt-[10px]">{display.title1}</div>
-
-                    {/* Delete Btn */}
-                    <div></div>
                 </div>
             )}
             {/* Item display  - End */}

@@ -7,10 +7,17 @@ import Card from '../../components/Card';
 
 function PublicPlaylists() {
     const { playlistId } = useParams();
-    const { theme } = useContext(Data);
+    const { theme, setPlaySong, setSongIndex } = useContext(Data);
 
     const [playlistData, setPlaylistData] = useState();
     const [tracks, setTracks] = useState();
+
+    // Handler Play all songs
+    const playAllSongs = () => {
+        let newList = tracks?.items.map((data) => data?.track);
+        setSongIndex(0);
+        setPlaySong([...newList]);
+    };
 
     // Get API data
 
@@ -92,7 +99,10 @@ function PublicPlaylists() {
                 {/* Header */}
                 <div className="flex justify-start items-center pb-[20px] border-b-[1px] border-[rgba(255,255,255,0.6)]">
                     {/* Play */}
-                    <button className="flex justify-center items-center duration-300 hover:scale-[1.05]">
+                    <button
+                        onClick={() => playAllSongs()}
+                        className="flex justify-center items-center duration-300 hover:scale-[1.05]"
+                    >
                         <i
                             class={`fa-solid fa-play text-[25px] w-[50px] h-[50px] bg-[${theme.primary1}] rounded-full flex justify-center items-center`}
                         ></i>

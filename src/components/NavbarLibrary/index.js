@@ -1,10 +1,6 @@
-import { useContext, useState } from 'react';
-import { Data } from '../../Context';
 import { NavLink } from 'react-router-dom';
 
 function NavbarLibrary() {
-    const { theme } = useContext(Data);
-
     let activeClass =
         'w-[120px] h-[40px] mr-[10px] bg-[rgba(220,220,220,0.8)] border-[3px] border-[#7b7b7b] rounded-[10px] text-[14px] font-semibold flex justify-center items-center cursor-pointer';
     let notActiveClass =
